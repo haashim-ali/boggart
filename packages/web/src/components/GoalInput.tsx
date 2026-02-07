@@ -16,7 +16,7 @@ export function GoalInput({ onSubmit, loading }: Props) {
   };
 
   return (
-    <div style={{ display: 'flex', gap: 10 }}>
+    <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
       <input
         value={goal}
         onChange={(e) => setGoal(e.target.value)}
@@ -28,7 +28,7 @@ export function GoalInput({ onSubmit, loading }: Props) {
         className="btn-primary"
         onClick={handleSubmit}
         disabled={loading || !goal.trim()}
-        style={{ whiteSpace: 'nowrap' }}
+        style={{ whiteSpace: 'nowrap', flexShrink: 0 }}
       >
         {loading ? 'Generating...' : 'Generate'}
       </button>

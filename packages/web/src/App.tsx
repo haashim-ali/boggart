@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useAuth } from './hooks/useAuth';
+import { ShaderBackground } from './components/ShaderBackground';
 import { LoginPage } from './pages/LoginPage';
 import { IngestPage } from './pages/IngestPage';
 import { ProfilePage } from './pages/ProfilePage';
@@ -19,83 +20,75 @@ export default function App() {
 
   if (loading) {
     return (
-      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh' }}>
-        <p style={{ color: 'var(--text-muted)' }}>Loading...</p>
-      </div>
+      <>
+        <ShaderBackground />
+        <div className="overlay">
+          <div className="view view-active view-loading">
+            <div className="loading-container">
+              <img src="/boggart-logo.png" alt="" className="loading-ghost" />
+              <p style={{ color: 'rgba(255,255,255,0.5)', fontWeight: 300, letterSpacing: '0.04em' }}>
+                Loading...
+              </p>
+            </div>
+          </div>
+        </div>
+      </>
     );
   }
 
   if (!user) {
-    return <LoginPage onLogin={login} />;
+    return (
+      <>
+        <ShaderBackground />
+        <div className="overlay">
+          <LoginPage onLogin={login} />
+        </div>
+      </>
+    );
   }
 
   return (
-    <div>
-      {/* Nav bar */}
-      <nav
-        style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
-          height: 56,
-          background: 'var(--surface)',
-          borderBottom: '1px solid var(--border)',
-          display: 'flex',
-          alignItems: 'center',
-          padding: '0 24px',
-          zIndex: 100,
-        }}
-      >
-        <span style={{ fontWeight: 700, fontSize: 18, color: 'var(--accent)' }}>Boggart</span>
+    <>
+      <ShaderBackground />
+      <div className="overlay">
+        {/* Nav bar */}
+        <nav className="nav-bar">
+          <div className="logo">
+            <img src="/boggart-logo.png" alt="Boggart" className="logo-icon-sm" />
+            <span className="logo-text-sm">Boggart</span>
+          </div>
 
-        <div style={{ flex: 1, display: 'flex', justifyContent: 'center', gap: 24 }}>
-          {(Object.keys(pageLabels) as Array<Exclude<Page, 'login'>>).map((p) => (
-            <span
-              key={p}
-              style={{
-                fontSize: 13,
-                fontWeight: page === p ? 600 : 400,
-                color: page === p ? 'var(--accent)' : 'var(--text-muted)',
-                cursor: 'default',
-              }}
-            >
-              {pageLabels[p]}
-            </span>
-          ))}
+          <div style={{ flex: 1, display: 'flex', justifyContent: 'center' }}>
+            <div className="nav-links">
+              {(Object.keys(pageLabels) as Array<Exclude<Page, 'login'>>).map((p) => (
+                <span
+                  key={p}
+                  className={`nav-link${page === p ? ' active' : ''}`}
+                >
+                  {pageLabels[p]}
+                </span>
+              ))}
+            </div>
+          </div>
+
+          <div className="nav-user">
+            {user.picture && (
+              <img src={user.picture} alt="" className="nav-user-avatar" />
+            )}
+            <span className="nav-user-name">{user.name}</span>
+            <button onClick={logout} className="nav-logout">
+              Logout
+            </button>
+          </div>
+        </nav>
+
+        {/* Page content */}
+        <div className="view-active">
+          {page === 'ingest' && <IngestPage onComplete={() => setPage('profile')} />}
+          {page === 'profile' && <ProfilePage onContinue={() => setPage('generate')} />}
+          {page === 'generate' && <GeneratePage />}
         </div>
-
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          {user.picture && (
-            <img
-              src={user.picture}
-              alt=""
-              style={{ width: 28, height: 28, borderRadius: '50%' }}
-            />
-          )}
-          <span style={{ fontSize: 13 }}>{user.name}</span>
-          <button
-            onClick={logout}
-            style={{
-              background: 'transparent',
-              color: 'var(--text-muted)',
-              fontSize: 12,
-              padding: '4px 10px',
-              border: '1px solid var(--border)',
-              borderRadius: 6,
-            }}
-          >
-            Logout
-          </button>
-        </div>
-      </nav>
-
-      {/* Page content */}
-      <div style={{ paddingTop: 56 }}>
-        {page === 'ingest' && <IngestPage onComplete={() => setPage('profile')} />}
-        {page === 'profile' && <ProfilePage onContinue={() => setPage('generate')} />}
-        {page === 'generate' && <GeneratePage />}
       </div>
-    </div>
+    </>
   );
 }
