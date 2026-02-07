@@ -13,6 +13,7 @@ import { ingestContacts } from '../google/contacts';
 import { ingestYoutube } from '../google/youtube';
 import { ingestDrive } from '../google/drive';
 import { linkEntities } from './linker';
+import { condenseEntityGraph } from './condenser';
 import { synthesise } from './synthesiser';
 import { store } from '../db/store';
 
@@ -113,11 +114,22 @@ async function runPipeline(
     return;
   }
 
+  // Condense entity graph via Haiku
+  status.stage = 'condensing';
+  let condensedText: string | undefined;
+  try {
+    condensedText = await condenseEntityGraph(graph);
+  } catch (err) {
+    console.warn('Condensing failed, falling back to raw data:', err);
+    // Non-fatal: synthesis can still work with raw entity counts
+    condensedText = undefined;
+  }
+
   // Synthesize profile
   status.stage = 'synthesizing';
   let profile: Profile;
   try {
-    profile = await synthesise(userId, graph);
+    profile = await synthesise(userId, graph, condensedText);
   } catch (err) {
     status.stage = 'error';
     status.error = err instanceof Error ? err.message : 'Synthesis failed';

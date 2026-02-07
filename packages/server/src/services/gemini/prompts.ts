@@ -1,12 +1,23 @@
 import type { EntityGraph, Profile, Strategy } from '@boggart/shared';
 
-export function buildSynthesisPrompt(graph: EntityGraph, userId: string): string {
-  return `You are a psychological profiler. Analyze the following data about a person and generate a comprehensive psychological profile.
+export function buildSynthesisPrompt(graph: EntityGraph, userId: string, condensedText?: string): string {
+  const dataSection = condensedText
+    ? `ANALYZED DATA (AI-condensed summaries from raw data — use these as your PRIMARY source):
 
-DATA:
+${condensedText}
+
+RAW ENTITY COUNTS (for additional context):
+- ${graph.people.length} contacts discovered
+- ${graph.moments.length} events/interactions
+- ${graph.artifacts.length} digital artifacts`
+    : `DATA:
 - People they interact with (${graph.people.length} contacts): ${JSON.stringify(graph.people.slice(0, 50))}
 - Life moments (${graph.moments.length} events): ${JSON.stringify(graph.moments.slice(0, 100))}
-- Digital artifacts (${graph.artifacts.length} items): ${JSON.stringify(graph.artifacts.slice(0, 50))}
+- Digital artifacts (${graph.artifacts.length} items): ${JSON.stringify(graph.artifacts.slice(0, 50))}`;
+
+  return `You are a psychological profiler. Analyze the following data about a person and generate a comprehensive psychological profile.
+
+${dataSection}
 
 Generate a JSON Profile object with this exact structure:
 {

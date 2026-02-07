@@ -19,6 +19,7 @@ export type PipelineStage =
   | 'idle'
   | 'ingesting'
   | 'linking'
+  | 'condensing'
   | 'synthesizing'
   | 'complete'
   | 'error';

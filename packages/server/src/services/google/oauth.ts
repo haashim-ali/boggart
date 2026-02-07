@@ -11,13 +11,11 @@ const SCOPES = [
   'https://www.googleapis.com/auth/userinfo.profile',
 ];
 
-const REDIRECT_URI = 'http://localhost:3000/api/auth/callback/google';
-
 export function createOAuth2Client() {
   return new google.auth.OAuth2(
     config.GOOGLE_CLIENT_ID,
     config.GOOGLE_CLIENT_SECRET,
-    REDIRECT_URI,
+    `${config.BASE_URL}/api/auth/callback/google`,
   );
 }
 

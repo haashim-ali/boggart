@@ -6,6 +6,8 @@
     "dev": "concurrently -n server,web -c blue,green \"npm run dev -w @boggart/server\" \"npm run dev -w @boggart/web\"",
     "dev:server": "npm run dev -w @boggart/server",
     "dev:web": "npm run dev -w @boggart/web",
+    "build": "npm run build -w @boggart/web",
+    "start": "npm run start -w @boggart/server",
     "typecheck": "npm run typecheck -w @boggart/shared && npm run typecheck -w @boggart/server && npm run typecheck -w @boggart/web"
   },
   "devDependencies": {

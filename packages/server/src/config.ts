@@ -11,6 +11,7 @@ export interface Config {
   ANTHROPIC_API_KEY: string;
   SESSION_SECRET: string;
   PORT: number;
+  BASE_URL: string;
 }
 
 function requireEnv(name: string): string {
@@ -27,4 +28,5 @@ export const config: Config = {
   ANTHROPIC_API_KEY: requireEnv('ANTHROPIC_API_KEY'),
   SESSION_SECRET: requireEnv('SESSION_SECRET'),
   PORT: parseInt(process.env.PORT || '3000', 10),
+  BASE_URL: process.env.BASE_URL || `http://localhost:${process.env.PORT || '3000'}`,
 };

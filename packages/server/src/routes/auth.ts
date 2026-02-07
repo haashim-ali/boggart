@@ -35,7 +35,7 @@ router.get('/callback/google', async (req, res) => {
     req.session.refreshToken = tokens.refresh_token ?? '';
     req.session.user = user;
 
-    res.redirect('http://localhost:5173');
+    res.redirect('/');
   } catch (error) {
     const message = error instanceof Error ? error.message : 'OAuth callback failed';
     res.status(500).json({ error: message });
