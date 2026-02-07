@@ -1,0 +1,15 @@
+{
+  "name": "boggart",
+  "private": true,
+  "workspaces": ["packages/*"],
+  "scripts": {
+    "dev": "concurrently -n server,web -c blue,green \"npm run dev -w @boggart/server\" \"npm run dev -w @boggart/web\"",
+    "dev:server": "npm run dev -w @boggart/server",
+    "dev:web": "npm run dev -w @boggart/web",
+    "typecheck": "npm run typecheck -w @boggart/shared && npm run typecheck -w @boggart/server && npm run typecheck -w @boggart/web"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.0",
+    "typescript": "^5.7.0"
+  }
+}
