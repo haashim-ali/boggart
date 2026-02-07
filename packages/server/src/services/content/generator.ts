@@ -7,6 +7,13 @@ import {
   buildCopyPrompt,
   buildVideoPrompt,
 } from '../gemini/prompts';
+import { getGoogleAI } from '../google-ai/client';
+import { generateImage } from '../google-ai/image';
+import { startVideoGeneration } from '../google-ai/video';
+
+/** The shape Claude returns — without the media status fields we add ourselves */
+type VisualConceptSpec = Omit<VisualConcept, 'generatedImage'>;
+type VideoScriptSpec = Omit<VideoScript, 'generatedVideo'>;
 
 export async function generateContent(
   profile: Profile,
@@ -19,13 +26,23 @@ export async function generateContent(
   const strategy = await generateJSON<Strategy>(client, strategyPrompt);
 
   // Visual, copy, and video in parallel
-  const [visual, copy, videoScript] = await Promise.all([
-    generateJSON<VisualConcept>(client, buildVisualPrompt(profile, strategy, goal)),
+  const [visualSpec, copy, videoSpec] = await Promise.all([
+    generateJSON<VisualConceptSpec>(client, buildVisualPrompt(profile, strategy, goal)),
     generateJSON<Copy>(client, buildCopyPrompt(profile, strategy, goal)),
-    generateJSON<VideoScript>(client, buildVideoPrompt(profile, strategy, goal)),
+    generateJSON<VideoScriptSpec>(client, buildVideoPrompt(profile, strategy, goal)),
   ]);
 
-  return {
+  // Initialise media fields
+  const visual: VisualConcept = { ...visualSpec, generatedImage: { status: 'unavailable' } };
+  const videoScript: VideoScript = { ...videoSpec, generatedVideo: { status: 'unavailable' } };
+
+  // Generate image synchronously if Google AI is available
+  const ai = getGoogleAI();
+  if (ai) {
+    visual.generatedImage = await generateImage(ai, visual.imagePrompt);
+  }
+
+  const content: GeneratedContent = {
     id: crypto.randomUUID(),
     goal,
     strategy,
@@ -34,6 +51,13 @@ export async function generateContent(
     videoScript,
     generatedAt: new Date().toISOString(),
   };
+
+  // Fire-and-forget video generation (mutates content.videoScript.generatedVideo)
+  if (ai) {
+    startVideoGeneration(ai, content);
+  }
+
+  return content;
 }
 
 export async function generateBrandAds(profile: Profile): Promise<GeneratedContent[]> {

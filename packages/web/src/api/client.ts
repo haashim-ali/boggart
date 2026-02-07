@@ -5,6 +5,7 @@ import type {
   EntitiesResponse,
   GenerateResponse,
   BrandsResponse,
+  MediaStatusResponse,
 } from '@boggart/shared';
 
 async function apiFetch<T>(path: string, options?: RequestInit): Promise<T> {
@@ -38,5 +39,9 @@ export const api = {
         body: JSON.stringify({ goal }),
       }),
     brands: () => apiFetch<BrandsResponse>('/api/generate/brands'),
+  },
+  media: {
+    videoStatus: (contentId: string) =>
+      apiFetch<MediaStatusResponse>(`/api/media/video/${contentId}/status`),
   },
 };

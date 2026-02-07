@@ -66,3 +66,10 @@ export interface GenerateResponse {
 export interface BrandsResponse {
   brands: GeneratedContent[];
 }
+
+// ── Media ────────────────────────────────────────────────
+
+export interface MediaStatusResponse {
+  contentId: string;
+  video: import('./content').MediaStatus;
+}

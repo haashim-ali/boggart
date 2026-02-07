@@ -21,6 +21,10 @@ class Store {
     return this.data.get(userId)?.content ?? [];
   }
 
+  getContentById(userId: string, contentId: string): GeneratedContent | undefined {
+    return this.data.get(userId)?.content.find((c) => c.id === contentId);
+  }
+
   upsert(userId: string, profile: Profile, entities: EntityGraph): void {
     const existing = this.data.get(userId);
     this.data.set(userId, {

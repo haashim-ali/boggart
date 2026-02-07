@@ -9,6 +9,7 @@ export interface Config {
   GOOGLE_CLIENT_ID: string;
   GOOGLE_CLIENT_SECRET: string;
   ANTHROPIC_API_KEY: string;
+  GOOGLE_AI_API_KEY: string | undefined;
   SESSION_SECRET: string;
   PORT: number;
   BASE_URL: string;
@@ -26,6 +27,7 @@ export const config: Config = {
   GOOGLE_CLIENT_ID: requireEnv('GOOGLE_CLIENT_ID'),
   GOOGLE_CLIENT_SECRET: requireEnv('GOOGLE_CLIENT_SECRET'),
   ANTHROPIC_API_KEY: requireEnv('ANTHROPIC_API_KEY'),
+  GOOGLE_AI_API_KEY: process.env.GOOGLE_AI_API_KEY,
   SESSION_SECRET: requireEnv('SESSION_SECRET'),
   PORT: parseInt(process.env.PORT || '3000', 10),
   BASE_URL: process.env.BASE_URL || `http://localhost:${process.env.PORT || '3000'}`,

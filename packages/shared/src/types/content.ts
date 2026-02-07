@@ -1,3 +1,10 @@
+/** Status of a generated media asset (image or video) */
+export type MediaStatus =
+  | { readonly status: 'unavailable' }
+  | { readonly status: 'generating' }
+  | { readonly status: 'completed'; readonly url: string }
+  | { readonly status: 'failed'; readonly error: string };
+
 /** Persuasion strategy tailored to a specific profile and goal */
 export interface Strategy {
   targetSummary: string;
@@ -16,6 +23,7 @@ export interface VisualConcept {
   colorPalette: string[];
   personalElements: string[];
   imagePrompt: string;
+  generatedImage: MediaStatus;
 }
 
 /** Ad copy with personalized hooks */
@@ -40,6 +48,7 @@ export interface VideoScript {
   mood: string;
   music: string;
   narration?: string;
+  generatedVideo: MediaStatus;
 }
 
 /** Complete generated content bundle for a goal */

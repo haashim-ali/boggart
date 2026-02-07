@@ -8,6 +8,7 @@ import authRouter from './routes/auth';
 import pipelineRouter from './routes/pipeline';
 import profileRouter from './routes/profile';
 import generateRouter from './routes/generate';
+import mediaRouter from './routes/media';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
@@ -23,6 +24,7 @@ app.use('/api/auth', authRouter);
 app.use('/api/pipeline', pipelineRouter);
 app.use('/api/profile', profileRouter);
 app.use('/api/generate', generateRouter);
+app.use('/api/media', mediaRouter);
 
 app.get('/api/health', (_req, res) => {
   res.json({ status: 'ok' });

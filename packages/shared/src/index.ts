@@ -25,6 +25,7 @@ export type {
 
 // Content
 export type {
+  MediaStatus,
   Strategy,
   VisualConcept,
   Copy,
@@ -47,4 +48,5 @@ export type {
   GenerateRequest,
   GenerateResponse,
   BrandsResponse,
+  MediaStatusResponse,
 } from './types/api';

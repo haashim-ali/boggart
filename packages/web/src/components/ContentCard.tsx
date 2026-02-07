@@ -1,7 +1,58 @@
-import type { GeneratedContent } from '@boggart/shared';
+import { useState, useCallback } from 'react';
+import type { GeneratedContent, MediaStatus } from '@boggart/shared';
+import { VideoGenerationPoller } from './VideoGenerationPoller';
 
 interface Props {
   content: GeneratedContent;
+}
+
+function ImageDisplay({ status }: { status: MediaStatus }) {
+  if (status.status === 'completed') {
+    return (
+      <img
+        src={status.url}
+        alt="Generated visual"
+        style={{ width: '100%', borderRadius: 8, marginBottom: 10 }}
+      />
+    );
+  }
+  if (status.status === 'failed') {
+    return (
+      <p style={{ fontSize: 13, color: 'var(--text-muted)', marginBottom: 10 }}>
+        Image generation failed: {status.error}
+      </p>
+    );
+  }
+  return null;
+}
+
+function VideoDisplay({ status, contentId }: { status: MediaStatus; contentId: string }) {
+  const [current, setCurrent] = useState(status);
+
+  const handleComplete = useCallback((updated: MediaStatus) => {
+    setCurrent(updated);
+  }, []);
+
+  if (current.status === 'completed') {
+    return (
+      <video
+        src={current.url}
+        controls
+        style={{ width: '100%', borderRadius: 8, marginTop: 10 }}
+      />
+    );
+  }
+  if (current.status === 'generating') {
+    return <VideoGenerationPoller contentId={contentId} onComplete={handleComplete} />;
+  }
+  if (current.status === 'failed') {
+    return (
+      <p style={{ fontSize: 13, color: 'var(--text-muted)', marginTop: 10 }}>
+        Video generation failed: {current.error}
+      </p>
+    );
+  }
+  return null;
 }
 
 export function ContentCard({ content }: Props) {
@@ -55,6 +106,7 @@ export function ContentCard({ content }: Props) {
       {/* Visual */}
       <div className="card" style={{ marginBottom: 12 }}>
         <h4 style={{ color: 'var(--accent)', marginBottom: 8 }}>Visual Concept</h4>
+        <ImageDisplay status={visual.generatedImage} />
         <p style={{ marginBottom: 6 }}>{visual.description}</p>
         <p style={{ fontSize: 13, color: 'var(--text-muted)', marginBottom: 8 }}>Style: {visual.style}</p>
         <div style={{ display: 'flex', gap: 6, alignItems: 'center', marginBottom: 10 }}>
@@ -139,6 +191,7 @@ export function ContentCard({ content }: Props) {
         <p style={{ fontSize: 13, color: 'var(--text-muted)' }}>
           Mood: {videoScript.mood} &middot; Music: {videoScript.music}
         </p>
+        <VideoDisplay status={videoScript.generatedVideo} contentId={content.id} />
       </div>
     </div>
   );
